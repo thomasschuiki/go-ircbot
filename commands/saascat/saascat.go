@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-chat-bot/bot"
 	"github.com/joho/godotenv"
-	"gitlab.com/thomaseitler/juicybotv2.git/web"
+	"gitlab.com/thomaseitler/juicybotv2/web"
 )
 
 type theCatAPIResponse []struct {

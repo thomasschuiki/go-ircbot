@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	"github.com/go-chat-bot/bot"
-	"gitlab.com/thomaseitler/juicybotv2.git/web"
+	"gitlab.com/thomaseitler/juicybotv2/web"
 )
 
 const (
