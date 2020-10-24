@@ -1,5 +1,28 @@
 package main
 
-func main() {
+import (
+	"os"
+	"strings"
 
+	"github.com/go-chat-bot/bot/irc"
+	_ "gitlab.com/thomaseitler/juicybotv2.git/commands/chucknorris"
+	_ "gitlab.com/thomaseitler/juicybotv2.git/commands/saascat"
+)
+
+var (
+	ircServer   = "irc.quakenet.org:6667"
+	ircChannels = "#uadabotchannel"
+	ircUser     = "juicybot"
+	ircNick     = "juicybot"
+)
+
+func main() {
+	juicybot := &irc.Config{
+		Server:   ircServer,
+		Channels: strings.Split(ircChannels, ","),
+		User:     ircUser,
+		Nick:     ircNick,
+		Debug:    os.Getenv("DEBUG") != ""}
+
+	irc.Run(juicybot)
 }
