@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/go-chat-bot/bot/irc"
-	_ "gitlab.com/thomaseitler/juicybotv2/commands/chucknorris/chucknorris"
-	_ "gitlab.com/thomaseitler/juicybotv2/commands/saascat/saascat"
+	_ "gitlab.com/thomaseitler/juicybotv2/commands/chucknorris"
+	_ "gitlab.com/thomaseitler/juicybotv2/commands/saascat"
 )
 
 var (
