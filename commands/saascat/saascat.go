@@ -3,12 +3,10 @@ package saascat
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/go-chat-bot/bot"
-	"github.com/joho/godotenv"
 	"gitlab.com/thomaseitler/juicybotv2/web"
 )
 
@@ -25,17 +23,12 @@ var (
 )
 
 func saascat(command *bot.Cmd) (string, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 	url := fmt.Sprintf("%s/images/search", baseurl)
-	var cat theCatAPIResponse
-
 	resp, err := web.MakeAPIRequest(url)
 	if err != nil {
 		return "", err
 	}
+	var cat theCatAPIResponse
 	parseAPIResponse(resp, &cat)
 	return cat[0].URL, nil
 }

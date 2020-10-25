@@ -9,19 +9,12 @@ import (
 	_ "gitlab.com/thomaseitler/juicybotv2/commands/saascat"
 )
 
-var (
-	ircServer   = "irc.quakenet.org:6667"
-	ircChannels = "#uadabotchannel"
-	ircUser     = "juicybot"
-	ircNick     = "juicybot"
-)
-
 func main() {
 	juicybot := &irc.Config{
-		Server:   ircServer,
-		Channels: strings.Split(ircChannels, ","),
-		User:     ircUser,
-		Nick:     ircNick,
+		Server:   os.Getenv("IRCSERVER"),
+		Channels: strings.Split(os.Getenv("IRCCHANNELS"), ","),
+		User:     os.Getenv("IRCUSER"),
+		Nick:     os.Getenv("IRCNICK"),
 		Debug:    os.Getenv("DEBUG") != ""}
 
 	irc.Run(juicybot)
