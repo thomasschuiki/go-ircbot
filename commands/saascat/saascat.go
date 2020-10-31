@@ -3,7 +3,9 @@ package saascat
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/go-chat-bot/bot"
@@ -23,10 +25,32 @@ var (
 )
 
 func saascat(command *bot.Cmd) (string, error) {
+	catsearch := fmt.Sprintf("%s/images/search", baseurl)
 	header := make(map[string]string)
 	header["x-api-key"] = apikey
-	if err != nil {
+
+	// parameter was given
+	if len(command.Args) > 0 {
+		u, err := url.Parse(catsearch)
+		if err != nil {
+			log.Fatal(err)
+		}
+		queryString := u.Query()
+		var mimeTypes string
+		switch command.Args[0] {
+		case "pic":
+			mimeTypes = "jpg,png"
+		case "gif":
+			mimeTypes = "gif"
+		}
+
+		queryString.Set("mime_types", mimeTypes)
+		u.RawQuery = queryString.Encode()
+		catsearch = u.String()
+	}
+
 	resp, err := web.MakeAPIRequest(catsearch, header)
+	if err != nil {
 		return "", err
 	}
 	var cat theCatAPIResponse
@@ -38,7 +62,7 @@ func init() {
 	bot.RegisterCommand(
 		"cat", // command
 		"Returns a random cat pic or gif",
-		"!cat",
+		"<pic | gif>",
 		saascat) // function
 }
 
