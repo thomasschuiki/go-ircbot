@@ -23,9 +23,10 @@ var (
 )
 
 func saascat(command *bot.Cmd) (string, error) {
-	url := fmt.Sprintf("%s/images/search", baseurl)
-	resp, err := web.MakeAPIRequest(url)
+	header := make(map[string]string)
+	header["x-api-key"] = apikey
 	if err != nil {
+	resp, err := web.MakeAPIRequest(catsearch, header)
 		return "", err
 	}
 	var cat theCatAPIResponse

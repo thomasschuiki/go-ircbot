@@ -34,7 +34,7 @@ func chucknorris(command *bot.PassiveCmd) (string, error) {
 		url := fmt.Sprintf("%s/jokes/random", baseurl)
 		var joke chuckFact
 
-		resp, err := web.MakeAPIRequest(url)
+		resp, err := web.MakeAPIRequest(url, nil)
 		if err != nil {
 			return "", err
 		}

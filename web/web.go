@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func MakeAPIRequest(url string) (*http.Response, error) {
+func MakeAPIRequest(url string, headers map[string]string) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -16,6 +16,10 @@ func MakeAPIRequest(url string) (*http.Response, error) {
 	}
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("User-Agent", "juicybot")
+
+	for key, value := range headers {
+		req.Header.Add(key, value)
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {
