@@ -1,11 +1,7 @@
 package saascat
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-	"net/url"
 	"os"
 
 	"github.com/go-chat-bot/bot"
@@ -25,36 +21,25 @@ var (
 )
 
 func saascat(command *bot.Cmd) (string, error) {
-	catsearch := fmt.Sprintf("%s/images/search", baseurl)
+	url := fmt.Sprintf("%s/images/search", baseurl)
 	header := make(map[string]string)
 	header["x-api-key"] = apikey
-
-	// parameter was given
+	queryParams := make(map[string]string)
+	// analyze parameters if given
 	if len(command.Args) > 0 {
-		u, err := url.Parse(catsearch)
-		if err != nil {
-			log.Fatal(err)
-		}
-		queryString := u.Query()
-		var mimeTypes string
 		switch command.Args[0] {
 		case "pic":
-			mimeTypes = "jpg,png"
+			queryParams["mime_types"] = "jpg,png"
 		case "gif":
-			mimeTypes = "gif"
+			queryParams["mime_types"] = "gif"
 		}
-
-		queryString.Set("mime_types", mimeTypes)
-		u.RawQuery = queryString.Encode()
-		catsearch = u.String()
 	}
-
-	resp, err := web.MakeAPIRequest(catsearch, header)
+	var cat theCatAPIResponse
+	err := web.MakeAPIRequest(url, header, queryParams, &cat)
 	if err != nil {
 		return "", err
 	}
-	var cat theCatAPIResponse
-	parseAPIResponse(resp, &cat)
+
 	return cat[0].URL, nil
 }
 
@@ -64,12 +49,4 @@ func init() {
 		"Returns a random cat pic or gif",
 		"<pic | gif>",
 		saascat) // function
-}
-
-func parseAPIResponse(r *http.Response, v *theCatAPIResponse) error {
-	err := json.NewDecoder(r.Body).Decode(&v)
-	if err != nil {
-		return fmt.Errorf("json decode error: %v", err)
-	}
-	return nil
 }

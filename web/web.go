@@ -2,35 +2,33 @@ package web
 
 import (
 	"fmt"
-	"net/http"
 	"time"
+
+	"github.com/go-resty/resty/v2"
 )
 
-func MakeAPIRequest(url string, headers map[string]string) (*http.Response, error) {
-	client := &http.Client{
-		Timeout: time.Second * 10,
-	}
-	req, err := http.NewRequest("GET", url, nil)
+func MakeAPIRequest(url string, headers map[string]string, queryParams map[string]string, v interface{}) error {
+	client := resty.New()
+	client.SetTimeout(time.Second * 10)
+
+	headers["Accept"] = "application/json"
+	headers["User-Agent"] = "juicybot"
+
+	resp, err := client.R().
+		SetHeaders(headers).
+		SetQueryParams(queryParams).
+		SetResult(&v).
+		Get(url)
+
 	if err != nil {
-		return nil, fmt.Errorf("error creating new request: %v", err)
+		return fmt.Errorf("client request error: %v", err)
 	}
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("User-Agent", "juicybot")
-
-	for key, value := range headers {
-		req.Header.Add(key, value)
+	if resp.StatusCode() == 404 {
+		return fmt.Errorf("%v not found", url)
 	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("client request error: %v", err)
-	}
-	if resp.StatusCode == 404 {
-		return nil, fmt.Errorf("%v not found", url)
-	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("response status code not 200: %v", resp)
+	if resp.StatusCode() != 200 {
+		return fmt.Errorf("response status code not 200: %v", resp)
 	}
 
-	return resp, nil
+	return err
 }
