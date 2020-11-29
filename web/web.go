@@ -10,7 +10,12 @@ import (
 func MakeAPIRequest(url string, headers map[string]string, queryParams map[string]string, v interface{}) error {
 	client := resty.New()
 	client.SetTimeout(time.Second * 10)
-
+	if headers == nil {
+		headers = make(map[string]string)
+	}
+	if queryParams == nil {
+		queryParams = make(map[string]string)
+	}
 	headers["Accept"] = "application/json"
 	headers["User-Agent"] = "juicybot"
 
