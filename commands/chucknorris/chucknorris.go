@@ -1,9 +1,7 @@
 package chucknorris
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"regexp"
 
 	"github.com/go-chat-bot/bot"
@@ -34,11 +32,10 @@ func chucknorris(command *bot.PassiveCmd) (string, error) {
 		url := fmt.Sprintf("%s/jokes/random", baseurl)
 		var joke chuckFact
 
-		resp, err := web.MakeAPIRequest(url, nil)
+		err := web.MakeAPIRequest(url, nil, nil, &joke)
 		if err != nil {
 			return "", err
 		}
-		parseAPIResponse(resp, &joke)
 		return joke.Value, nil
 	}
 
@@ -49,12 +46,4 @@ func init() {
 	bot.RegisterPassiveCommand(
 		"chucknorris", // command
 		chucknorris)   // function
-}
-
-func parseAPIResponse(r *http.Response, v *chuckFact) error {
-	err := json.NewDecoder(r.Body).Decode(&v)
-	if err != nil {
-		return fmt.Errorf("json decode error: %v", err)
-	}
-	return nil
 }
