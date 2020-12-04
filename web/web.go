@@ -16,8 +16,13 @@ func MakeAPIRequest(url string, headers map[string]string, queryParams map[strin
 	if queryParams == nil {
 		queryParams = make(map[string]string)
 	}
+	if headers["Accept"] == "" {
 	headers["Accept"] = "application/json"
+	}
+
+	if headers["User-Agent"] == "" {
 	headers["User-Agent"] = "juicybot"
+	}
 
 	resp, err := client.R().
 		SetHeaders(headers).
