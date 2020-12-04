@@ -1,3 +1,4 @@
+// +heroku goVersion go1.15
 module gitlab.com/thomaseitler/juicybotv2
 
 go 1.15
