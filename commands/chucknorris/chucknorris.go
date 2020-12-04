@@ -23,7 +23,7 @@ type chuckFact struct {
 }
 
 var (
-	baseurl = "https://api.chucknorris.io/"
+	baseurl = "https://api.chucknorris.io"
 	re      = regexp.MustCompile(pattern)
 )
 
