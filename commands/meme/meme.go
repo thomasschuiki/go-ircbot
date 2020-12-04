@@ -39,10 +39,9 @@ func meme(command *bot.Cmd) (string, error) {
 		link := memedoc.Find("section.info > h1:nth-child(1) > a:nth-child(1)").First()
 
 		// For each item found, get the title and url
-		// link := s.Find("h2 a")
 		title = link.Text()
 		href, _ = link.Attr("href")
-
+		sb.WriteString(fmt.Sprintf("%s %s\n", title, fmt.Sprintf("%s%s", baseurl, href)))
 	} else {
 		// Get first 5 results of search
 		memedoc.Find(".entry-grid-body > tr:nth-child(1) td").Each(func(i int, s *goquery.Selection) {
@@ -55,7 +54,6 @@ func meme(command *bot.Cmd) (string, error) {
 	}
 
 	botmsg := sb.String()
-	// fmt.Println(botmsg)
 	return botmsg, nil
 }
 
