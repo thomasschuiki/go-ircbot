@@ -10,6 +10,8 @@ import (
 func MakeAPIRequest(url string, headers map[string]string, queryParams map[string]string, v interface{}) error {
 	client := resty.New()
 	client.SetTimeout(time.Second * 10)
+	client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(15))
+
 	if headers == nil {
 		headers = make(map[string]string)
 	}
