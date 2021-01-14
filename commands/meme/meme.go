@@ -20,7 +20,7 @@ func meme(command *bot.Cmd) (string, error) {
 	// analyze parameters if given
 	if len(command.Args) > 0 {
 		url = fmt.Sprintf("%s/search", baseurl)
-		queryParams["q"] = command.Args[0]
+		queryParams["q"] = strings.Join(command.Args, " ")
 		isSearch = true
 	} else {
 		url = fmt.Sprintf("%s/random", baseurl)
