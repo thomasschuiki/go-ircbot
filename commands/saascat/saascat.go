@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/go-chat-bot/bot"
-	"gitlab.com/thomaseitler/juicybotv2/web"
+	"github.com/thomasschuiki/go-ircbot/web"
 )
 
 type theCatAPIResponse []struct {
