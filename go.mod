@@ -1,5 +1,5 @@
 // +heroku goVersion go1.15
-module gitlab.com/thomaseitler/juicybotv2
+module github.com/thomasschuiki/go-ircbot
 
 go 1.15
 

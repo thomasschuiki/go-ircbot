@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/go-chat-bot/bot/irc"
-	_ "gitlab.com/thomaseitler/juicybotv2/commands/chucknorris"
-	_ "gitlab.com/thomaseitler/juicybotv2/commands/meme"
-	_ "gitlab.com/thomaseitler/juicybotv2/commands/saascat"
+	_ "github.com/thomasschuiki/go-ircbot/commands/chucknorris"
+	_ "github.com/thomasschuiki/go-ircbot/commands/meme"
+	_ "github.com/thomasschuiki/go-ircbot/commands/saascat"
 )
 
 func main() {
