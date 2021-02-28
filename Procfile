@@ -1,1 +1,1 @@
-worker: bin/juicybotv2
+worker: bin/go-ircbot
