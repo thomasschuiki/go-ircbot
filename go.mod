@@ -1,7 +1,7 @@
 // +heroku goVersion go1.15
 module github.com/thomasschuiki/go-ircbot
 
-go 1.15
+go 1.16
 
 require (
 	github.com/PuerkitoBio/goquery v1.6.0
