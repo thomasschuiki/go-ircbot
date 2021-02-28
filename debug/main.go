@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chat-bot/bot"
 	_ "github.com/thomasschuiki/go-ircbot/commands/chucknorris"
+	_ "github.com/thomasschuiki/go-ircbot/commands/covid"
 	_ "github.com/thomasschuiki/go-ircbot/commands/meme"
 	_ "github.com/thomasschuiki/go-ircbot/commands/saascat"
 )
