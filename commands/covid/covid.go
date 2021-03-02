@@ -51,15 +51,26 @@ func covid(command *bot.Cmd) (string, error) {
 	// analyze parameters if given
 	if len(command.Args) > 0 {
 		url = fmt.Sprintf("%s/%s", url, command.Args[0])
-		var cR covidResponse
-		err := web.MakeAPIRequest(url, header, queryParams, &cR)
+		var cRToday covidResponse
+		var cRYesterday covidResponse
+		var cRTwoDaysAgo covidResponse
+		err := web.MakeAPIRequest(url, header, queryParams, &cRToday)
+		err = web.MakeAPIRequest(url, header, map[string]string{"yesterday": "true"}, &cRYesterday)
+		err = web.MakeAPIRequest(url, header, map[string]string{"twoDaysAgo": "true"}, &cRTwoDaysAgo)
 		if err != nil {
 			return "", err
 		}
-
-		return fmt.Sprintf("Todays Cases: %d", cR.TodayCases), nil
+		ChangeSinceYesterday := percentageChange(cRYesterday.TodayCases, cRToday.TodayCases)
+		ChangeSinceTwoDaysAgo := percentageChange(cRTwoDaysAgo.TodayCases, cRToday.TodayCases)
+		return fmt.Sprintf("Cases today: %d, Cases yesterday: %d, Cases 2-days ago: %d\n That is %f%% since Yesterday and %f%% since 2-days ago.", cRToday.TodayCases, cRYesterday.TodayCases, cRTwoDaysAgo.TodayCases, ChangeSinceYesterday, ChangeSinceTwoDaysAgo), nil
 	}
-	return "couldn't find any information", nil
+	return "Please provide a country name, iso2, iso3, or country ID code. e.g.: AT, Austria ", nil
+}
+
+func percentageChange(old, new int) (delta float64) {
+	diff := float64(new - old)
+	delta = (diff / float64(old)) * 100
+	return
 }
 
 func init() {
