@@ -59,10 +59,19 @@ func covid(command *bot.Cmd) (string, error) {
 		err = web.MakeAPIRequest(url, header, map[string]string{"twoDaysAgo": "true"}, &cRTwoDaysAgo)
 		if err != nil {
 			return "", err
+		}	
+		var strToday string
+		strChange := ""
+		if cRToday.TodayCases > 0 {
+		    strToday = fmt.Sprintf("Cases today: %d", cRToday.TodayCases)
+		    ChangeSinceYesterday := percentageChange(cRYesterday.TodayCases, cRToday.TodayCases)
+		    ChangeSinceTwoDaysAgo := percentageChange(cRTwoDaysAgo.TodayCases, cRToday.TodayCases)
+			strChange = fmt.Sprintf("\nThat is %3.2f%% since Yesterday and %3.2f%% since 2-days ago.",ChangeSinceYesterday, ChangeSinceTwoDaysAgo)
+		} else {
+		    strToday = "Cases today: no data"
 		}		
-		ChangeSinceYesterday := percentageChange(cRYesterday.TodayCases, cRToday.TodayCases)
-		ChangeSinceTwoDaysAgo := percentageChange(cRTwoDaysAgo.TodayCases, cRToday.TodayCases)
-		return fmt.Sprintf("Cases today: %d, Cases yesterday: %d, Cases 2-days ago: %d\nThat is %3.2f%% since Yesterday and %3.2f%% since 2-days ago.", cRToday.TodayCases, cRYesterday.TodayCases, cRTwoDaysAgo.TodayCases, ChangeSinceYesterday, ChangeSinceTwoDaysAgo), nil
+		
+		return fmt.Sprintf("%s, Cases yesterday: %d, Cases 2-days ago: %d.%s", strToday, cRYesterday.TodayCases, cRTwoDaysAgo.TodayCases, strChange), nil
 	}
 	return "Please provide a country name, iso2, iso3, or country ID code. e.g.: AT, Austria ", nil
 }
