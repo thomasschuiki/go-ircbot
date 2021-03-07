@@ -7,7 +7,7 @@ import (
 	"github.com/thomasschuiki/go-ircbot/web"
 )
 
-type covidResponse struct {
+type wmCountriesCountryResponse struct {
 	Updated     int64  `json:"updated"`
 	Country     string `json:"country"`
 	CountryInfo struct {
@@ -51,26 +51,26 @@ func covid(command *bot.Cmd) (string, error) {
 	// analyze parameters if given
 	if len(command.Args) > 0 {
 		url = fmt.Sprintf("%s/%s", url, command.Args[0])
-		var cRToday covidResponse
-		var cRYesterday covidResponse
-		var cRTwoDaysAgo covidResponse
+		var cRToday wmCountriesCountryResponse
+		var cRYesterday wmCountriesCountryResponse
+		var cRTwoDaysAgo wmCountriesCountryResponse
 		err := web.MakeAPIRequest(url, header, queryParams, &cRToday)
 		err = web.MakeAPIRequest(url, header, map[string]string{"yesterday": "true"}, &cRYesterday)
 		err = web.MakeAPIRequest(url, header, map[string]string{"twoDaysAgo": "true"}, &cRTwoDaysAgo)
 		if err != nil {
 			return "", err
-		}	
+		}
 		var strToday string
 		strChange := ""
 		if cRToday.TodayCases > 0 {
-		    strToday = fmt.Sprintf("Cases today: %d", cRToday.TodayCases)
-		    ChangeSinceYesterday := percentageChange(cRYesterday.TodayCases, cRToday.TodayCases)
-		    ChangeSinceTwoDaysAgo := percentageChange(cRTwoDaysAgo.TodayCases, cRToday.TodayCases)
-			strChange = fmt.Sprintf("\nThat is %3.2f%% since Yesterday and %3.2f%% since 2-days ago.",ChangeSinceYesterday, ChangeSinceTwoDaysAgo)
+			strToday = fmt.Sprintf("Cases today: %d", cRToday.TodayCases)
+			ChangeSinceYesterday := percentageChange(cRYesterday.TodayCases, cRToday.TodayCases)
+			ChangeSinceTwoDaysAgo := percentageChange(cRTwoDaysAgo.TodayCases, cRToday.TodayCases)
+			strChange = fmt.Sprintf("\nThat is %3.2f%% since Yesterday and %3.2f%% since 2-days ago.", ChangeSinceYesterday, ChangeSinceTwoDaysAgo)
 		} else {
-		    strToday = "Cases today: no data"
-		}		
-		
+			strToday = "Cases today: no data"
+		}
+
 		return fmt.Sprintf("%s, Cases yesterday: %d, Cases 2-days ago: %d.%s", strToday, cRYesterday.TodayCases, cRTwoDaysAgo.TodayCases, strChange), nil
 	}
 	return "Please provide a country name, iso2, iso3, or country ID code. e.g.: AT, Austria ", nil
