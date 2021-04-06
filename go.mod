@@ -1,4 +1,4 @@
-// +heroku goVersion go1.15
+// +heroku goVersion go1.16
 module github.com/thomasschuiki/go-ircbot
 
 go 1.16
@@ -11,6 +11,6 @@ require (
 	github.com/mattn/go-shellwords v1.0.10 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/thoj/go-ircevent v0.0.0-20190807115034-8e7ce4b5a1eb // indirect
-	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
-	golang.org/x/text v0.3.4 // indirect
+	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
+	golang.org/x/text v0.3.5 // indirect
 )
