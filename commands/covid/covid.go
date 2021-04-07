@@ -92,7 +92,7 @@ func covid(command *bot.Cmd) (string, error) {
 	histurl := fmt.Sprintf("%s/covid-19/historical", baseurl)
 	header := make(map[string]string)
 	queryParams := make(map[string]string)
-	lastdays := 7
+	lastdays := 8
 	// analyze parameters if given
 	if len(command.Args) > 0 {
 		countryurl = fmt.Sprintf("%s/%s", countryurl, command.Args[0])
@@ -155,12 +155,10 @@ func calculateIncidence(histCases []jhucsseStat, population, lastdays, casesToda
 			break
 		}
 		diff := float64(histCases[i+1].Count) - float64(histCases[i].Count)
-		// cases_in_period_by_day = append(cases_in_period_by_day, diff)
 		cases_in_period_by_day_sum += diff
 	}
-	// cases_in_period_by_day = append(cases_in_period_by_day, float64(casesToday.TodayCases))
-	cases_in_period_by_day_sum += float64(casesToday)
-	// calc incidence
+	// cases_in_period_by_day_sum += float64(casesToday)
+	// calculate incidence
 	return cases_in_period_by_day_sum / float64(population) * 100000.0
 }
 
