@@ -92,7 +92,7 @@ func covid(command *bot.Cmd) (string, error) {
 	histurl := fmt.Sprintf("%s/covid-19/historical", baseurl)
 	header := make(map[string]string)
 	queryParams := make(map[string]string)
-	lastdays := 7
+	lastdays := 8
 	// analyze parameters if given
 	if len(command.Args) > 0 {
 		countryurl = fmt.Sprintf("%s/%s", countryurl, command.Args[0])
