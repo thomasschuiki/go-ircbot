@@ -23,7 +23,6 @@ func MakeAPIRequest(url string, headers map[string]string, queryParams map[strin
 	if headers["Accept"] == "" {
 		headers["Accept"] = "application/json"
 	}
-
 	if headers["User-Agent"] == "" {
 		headers["User-Agent"] = "juicybot"
 	}
@@ -35,13 +34,13 @@ func MakeAPIRequest(url string, headers map[string]string, queryParams map[strin
 		Get(url)
 
 	if err != nil {
-		return fmt.Errorf("client request error: %v", err)
+		return fmt.Errorf("client request error: %w", err)
 	}
 	if resp.StatusCode() == 404 {
-		return fmt.Errorf("%v not found", url)
+		return fmt.Errorf("%s not found", url)
 	}
 	if resp.StatusCode() != 200 {
-		return fmt.Errorf("response status code not 200: %v", resp)
+		return fmt.Errorf("response status code not 200: %#v", resp)
 	}
 
 	return err
