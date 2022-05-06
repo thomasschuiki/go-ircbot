@@ -165,7 +165,7 @@ func calculateIncidence(histCases []jhucsseStat, population, lastdays, casesToda
 func init() {
 	bot.RegisterCommand(
 		"covid", // command
-		"Returns statistics about CVOID via disease.sh",
+		"Returns statistics about COVID 19 via disease.sh",
 		"<country>",
 		covid) // function
 }
