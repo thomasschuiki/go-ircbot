@@ -1,1 +1,1 @@
-worker: bin/go-ircbot
+worker: go-ircbot
