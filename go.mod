@@ -1,7 +1,7 @@
 // +heroku goVersion go1.17
 module github.com/thomasschuiki/go-ircbot
 
-go 1.17
+go 1.18
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
