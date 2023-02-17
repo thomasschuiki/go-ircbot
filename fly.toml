@@ -7,18 +7,18 @@ kill_timeout = 5
 processes = []
 
 [build]
-  builder = "paketobuildpacks/builder:base"
-  buildpacks = ["gcr.io/paketo-buildpacks/go"]
+builder = "paketobuildpacks/builder:base"
+buildpacks = ["gcr.io/paketo-buildpacks/go"]
 
 [env]
-  IRCCHANNELS = "#uadachannel"
-  IRCNICK = "juicybot"
-  IRCSERVER = "irc.quakenet.org:6667"
-  IRCUSER = "chloe"
+IRCCHANNELS = "#uadachannel"
+IRCNICK = "juicybot"
+IRCSERVER = "irc.quakenet.org:6667"
+IRCUSER = "chloe"
 
 [[services]]
-  internal_port = 6667
-  protocol = "tcp"
+internal_port = 6667
+protocol = "tcp"
 
-  [[services.ports]]
-    port = "6667"
+[[services.ports]]
+port = "6667"

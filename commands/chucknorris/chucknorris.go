@@ -2,9 +2,12 @@ package chucknorris
 
 import (
 	"fmt"
+	"log"
 	"regexp"
+	"strings"
 
-	"github.com/go-chat-bot/bot"
+	"github.com/StalkR/goircbot/bot"
+	"github.com/fluffle/goirc/client"
 	"github.com/thomasschuiki/go-ircbot/web"
 )
 
@@ -27,23 +30,22 @@ var (
 	re      = regexp.MustCompile(pattern)
 )
 
-func chucknorris(command *bot.PassiveCmd) (string, error) {
-	if re.MatchString(command.Raw) {
+func chucknorris(b bot.Bot, line *client.Line) {
+	text := strings.TrimSpace(line.Args[1])
+	if re.MatchString(text) {
 		url := fmt.Sprintf("%s/jokes/random", baseurl)
 		var joke chuckFact
 
 		err := web.MakeAPIRequest(url, nil, nil, &joke)
 		if err != nil {
-			return "", err
+			log.Fatal(err)
 		}
-		return joke.Value, nil
-	}
 
-	return "", nil
+		target := line.Args[0]
+		b.Privmsg(target, joke.Value)
+	}
 }
 
-func init() {
-	bot.RegisterPassiveCommand(
-		"chucknorris", // command
-		chucknorris)   // function
+func Register(b bot.Bot) {
+	b.HandleFunc("privmsg", func(c *client.Conn, l *client.Line) { chucknorris(b, l) })
 }

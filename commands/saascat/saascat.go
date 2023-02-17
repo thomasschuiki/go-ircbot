@@ -2,9 +2,10 @@ package saascat
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/go-chat-bot/bot"
+	"github.com/StalkR/goircbot/bot"
 	"github.com/thomasschuiki/go-ircbot/web"
 )
 
@@ -20,14 +21,14 @@ var (
 	apikey  = os.Getenv("SAASCATAPIKEY")
 )
 
-func saascat(command *bot.Cmd) (string, error) {
+func saascat(e *bot.Event) {
 	url := fmt.Sprintf("%s/images/search", baseurl)
 	header := make(map[string]string)
 	header["x-api-key"] = apikey
 	queryParams := make(map[string]string)
 	// analyze parameters if given
-	if len(command.Args) > 0 {
-		switch command.Args[0] {
+	if len(e.Args) > 0 {
+		switch e.Args {
 		case "pic":
 			queryParams["mime_types"] = "jpg,png"
 		case "gif":
@@ -37,16 +38,19 @@ func saascat(command *bot.Cmd) (string, error) {
 	var cat theCatAPIResponse
 	err := web.MakeAPIRequest(url, header, queryParams, &cat)
 	if err != nil {
-		return "", err
+		log.Fatal(err)
 	}
 
-	return cat[0].URL, nil
+  returnString := cat[0].URL
+	e.Bot.Privmsg(e.Target, returnString)
 }
 
-func init() {
-	bot.RegisterCommand(
-		"cat", // command
-		"Returns a random cat pic or gif",
-		"<pic | gif>",
-		saascat) // function
+// Register registers the plugin with a bot.
+func Register(b bot.Bot) {
+	b.Commands().Add("cat", bot.Command{
+		Help:    "Returns a random cat pic or gif. Supply 'pic' or 'gif' to get a specific image.",
+		Handler: saascat,
+		Pub:     true,
+		Priv:    true,
+		Hidden:  false})
 }

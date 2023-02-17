@@ -12,5 +12,8 @@ build:
 run:
 	go run main.go
 
+debug:
+	IRCCHANNELS="#uadachannel" IRCNICK="juicybot" IRCSERVER="irc.quakenet.org:6667" IRCUSER="notchloe" go run main.go
+
 dev:
 	go run debug/main.go

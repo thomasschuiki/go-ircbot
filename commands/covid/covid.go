@@ -3,10 +3,12 @@ package covid
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"sort"
+	"strings"
 	"time"
 
-	"github.com/go-chat-bot/bot"
+	"github.com/StalkR/goircbot/bot"
 	"github.com/thomasschuiki/go-ircbot/web"
 )
 
@@ -87,37 +89,38 @@ var (
 	baseurl = "https://disease.sh/v3"
 )
 
-func covid(command *bot.Cmd) (string, error) {
+func covid(e *bot.Event) {
 	countryurl := fmt.Sprintf("%s/covid-19/countries", baseurl)
 	histurl := fmt.Sprintf("%s/covid-19/historical", baseurl)
 	header := make(map[string]string)
 	queryParams := make(map[string]string)
 	lastdays := 8
+	args := strings.Split(e.Args, " ")
 	// analyze parameters if given
-	if len(command.Args) > 0 {
-		countryurl = fmt.Sprintf("%s/%s", countryurl, command.Args[0])
-		histurl = fmt.Sprintf("%s/%s", histurl, command.Args[0])
+	if len(args) > 0 {
+		countryurl = fmt.Sprintf("%s/%s", countryurl, args[0])
+		histurl = fmt.Sprintf("%s/%s", histurl, args[0])
 
 		var cRYesterday wmCountriesCountryResponse
 		var cRTwoDaysAgo wmCountriesCountryResponse
 		var casesToday wmCountriesCountryResponse
 		err := web.MakeAPIRequest(countryurl, header, nil, &casesToday)
 		if err != nil {
-			return "", err
+			log.Fatal(err)
 		}
 		err = web.MakeAPIRequest(countryurl, header, map[string]string{"yesterday": "true"}, &cRYesterday)
 		if err != nil {
-			return "", err
+			log.Fatal(err)
 		}
 		err = web.MakeAPIRequest(countryurl, header, map[string]string{"twoDaysAgo": "true"}, &cRTwoDaysAgo)
 		if err != nil {
-			return "", err
+			log.Fatal(err)
 		}
 		var hist7 jhucsseHistoricalCountryResponse
 		queryParams["lastdays"] = fmt.Sprintf("%d", lastdays)
 		err = web.MakeAPIRequest(histurl, header, queryParams, &hist7)
 		if err != nil {
-			return "", err
+			log.Fatal(err)
 		}
 		incidence_rate := calculateIncidence(hist7.Timeline.Cases, casesToday.Population, lastdays, casesToday.TodayCases)
 		var strToday string
@@ -131,15 +134,18 @@ func covid(command *bot.Cmd) (string, error) {
 			strToday = "Cases today: no data"
 		}
 
-		return fmt.Sprintf("%s, Cases yesterday: %d, Cases 2-days ago: %d.%s\n7-day incidency rate is ~%3.3f", strToday, cRYesterday.TodayCases, cRTwoDaysAgo.TodayCases, strChange, incidence_rate), nil
+		returnString := fmt.Sprintf("%s, Cases yesterday: %d, Cases 2-days ago: %d.%s\n7-day incidency rate is ~%3.3f", strToday, cRYesterday.TodayCases, cRTwoDaysAgo.TodayCases, strChange, incidence_rate)
+		e.Bot.Privmsg(e.Target, returnString)
+    return
 	}
-	return "Please provide a country name, iso2, iso3, or country ID code. e.g.: AT, Austria ", nil
+	returnString := "Please provide a country name, iso2, iso3, or country ID code. e.g.: AT, Austria "
+	e.Bot.Privmsg(e.Target, returnString)
+  return
 }
 
-func percentageChange(old, new int) (delta float64) {
+func percentageChange(old, new int) float64 {
 	diff := float64(new - old)
-	delta = (diff / float64(old)) * 100
-	return
+	return (diff / float64(old)) * 100
 }
 
 func calculateIncidence(histCases []jhucsseStat, population, lastdays, casesToday int) float64 {
@@ -162,10 +168,12 @@ func calculateIncidence(histCases []jhucsseStat, population, lastdays, casesToda
 	return cases_in_period_by_day_sum / float64(population) * 100000.0
 }
 
-func init() {
-	bot.RegisterCommand(
-		"covid", // command
-		"Returns statistics about COVID 19 via disease.sh",
-		"<country>",
-		covid) // function
+// Register registers the plugin with a bot.
+func Register(b bot.Bot) {
+	b.Commands().Add("covid", bot.Command{
+		Help:    "Returns statistics about COVID 19 via disease.sh. Provide country as argument.",
+		Handler: covid,
+		Pub:     true,
+		Priv:    true,
+		Hidden:  false})
 }

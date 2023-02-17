@@ -2,10 +2,11 @@ package meme
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/go-chat-bot/bot"
+	"github.com/StalkR/goircbot/bot"
 	"github.com/thomasschuiki/go-ircbot/web"
 )
 
@@ -13,25 +14,25 @@ var (
 	baseurl = "https://knowyourmeme.com"
 )
 
-func meme(command *bot.Cmd) (string, error) {
+func meme(e *bot.Event) {
 	var url, title, href string
 	queryParams := make(map[string]string)
 	isSearch := false
 	// analyze parameters if given
-	if len(command.Args) > 0 {
+	if len(e.Args) > 0 {
 		url = fmt.Sprintf("%s/search", baseurl)
-		queryParams["q"] = strings.Join(command.Args, " ")
+		queryParams["q"] = e.Args
 		isSearch = true
 	} else {
 		url = fmt.Sprintf("%s/random", baseurl)
 	}
 	response, err := web.GetWebpage(url, queryParams)
 	if err != nil {
-		return "", err
+		log.Fatal(err)
 	}
 	memedoc, err := goquery.NewDocumentFromReader(response)
 	if err != nil {
-		return "", err
+		log.Fatal(err)
 	}
 	var sb strings.Builder
 	if !isSearch {
@@ -53,14 +54,16 @@ func meme(command *bot.Cmd) (string, error) {
 		})
 	}
 
-	botmsg := sb.String()
-	return botmsg, nil
+	returnString := sb.String()
+	e.Bot.Privmsg(e.Target, returnString)
 }
 
-func init() {
-	bot.RegisterCommand(
-		"meme", // command
-		"Returns a random meme or searches for one on knowyourmeme.org",
-		"<random | memename>",
-		meme) // function
+// Register registers the plugin with a bot.
+func Register(b bot.Bot) {
+	b.Commands().Add("meme", bot.Command{
+		Help:    "Returns a random meme or searches for one on knowyourmeme.org. Use 'random' or the name of a meme as an argument.",
+		Handler: meme,
+		Pub:     true,
+		Priv:    true,
+		Hidden:  false})
 }
